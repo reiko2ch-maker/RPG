@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
-  <title>宵鳴き館 | 縦画面版</title>
+  <title>宵鳴き館 | 縦画面版 改善版</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -11,18 +11,18 @@
     <header class="top-strip">
       <div class="hud-left">
         <div id="mapName" class="map-name">宵鳴き館 玄関ホール</div>
-        <div id="hintText" class="hint">館の気配を調べよう</div>
+        <div id="hintText" class="hint">次の目的がここに表示されます</div>
       </div>
       <div class="hud-right">
         <button id="saveBtn" class="ui-btn small">保存</button>
-        <button id="menuBtn" class="ui-btn small">題名</button>
+        <button id="menuBtn" class="ui-btn small">タイトル</button>
       </div>
     </header>
 
     <div id="inventoryBar" class="inventory"></div>
 
     <section class="game-stage">
-      <canvas id="game" width="320" height="180" aria-label="宵鳴き館"></canvas>
+      <canvas id="game" width="240" height="320" aria-label="宵鳴き館"></canvas>
       <div id="overlay" class="overlay hidden"></div>
 
       <div id="titleScreen" class="screen title-screen">
@@ -31,15 +31,15 @@
           <h1>宵鳴き館</h1>
           <p class="subtitle">読むほどに、出口が遠のく。</p>
           <div class="title-copy">
-            古い洋館へ迷い込んだ少女・ユイは、
-            誰かの記録を辿りながら地下の扉へ向かう。
-            けれど、この館は読んだ者の足音を忘れない。
+            雨宿りのつもりで入った古い洋館。
+            少女・ユイは、館に残された記録を辿りながら地下の扉へ向かう。
+            けれどこの館は、読んだ者の順番を忘れない。
           </div>
           <div class="title-actions">
             <button id="startBtn" class="ui-btn large">ゲームを始める</button>
             <button id="continueBtn" class="ui-btn large secondary">続きから</button>
           </div>
-          <div class="title-footer">縦画面対応 / 左下スティック操作 / 画面タップでも調べる</div>
+          <div class="title-footer">縦画面対応 / 左下スティック移動 / 「調べる」ボタンのみで反応</div>
         </div>
       </div>
 
@@ -77,7 +77,7 @@
           <button id="interactBtn" class="action-btn primary">調べる</button>
           <div class="sub-actions">
             <button id="runBtn" class="action-btn small toggle">歩く</button>
-            <button id="tapHintBtn" class="action-btn small ghost">画面タップ可</button>
+            <button id="guideBtn" class="action-btn small ghost">次の目的</button>
           </div>
         </div>
       </section>
