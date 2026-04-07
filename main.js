@@ -10,6 +10,7 @@ const ui = {
   hudHint: document.getElementById('hintText'),
   inventory: document.getElementById('inventoryBar'),
   messageBox: document.getElementById('messageBox'),
+  tapHintBtn: document.getElementById('tapHintBtn'),
   speakerName: document.getElementById('speakerName'),
   messageText: document.getElementById('messageText'),
   choiceBox: document.getElementById('choiceBox'),
@@ -26,6 +27,8 @@ const ui = {
   saveBtn: document.getElementById('saveBtn'),
   menuBtn: document.getElementById('menuBtn'),
   runBtn: document.getElementById('runBtn'),
+  joystick: document.getElementById('joystick'),
+  joystickKnob: document.getElementById('joystickKnob'),
 };
 
 const ITEMS = {
@@ -233,6 +236,7 @@ const state = {
 };
 
 const keys = { up: false, down: false, left: false, right: false };
+const touchStick = { active: false, pointerId: null, x: 0, y: 0, radius: 38 };
 let lastTime = performance.now();
 
 function resetState() {
@@ -263,6 +267,7 @@ function resetState() {
   state.choiceActive = false;
   state.controlsLocked = false;
   state.running = false;
+  resetStick();
   state.flashTimer = 0;
   state.shakeTimer = 0;
   state.chaser = null;
@@ -478,6 +483,8 @@ function updatePlayer(dt) {
   if (keys.down) move.y += 1;
   if (keys.left) move.x -= 1;
   if (keys.right) move.x += 1;
+  move.x += touchStick.x;
+  move.y += touchStick.y;
 
   if (move.x === 0 && move.y === 0) return;
 
@@ -485,7 +492,7 @@ function updatePlayer(dt) {
   move.x /= len;
   move.y /= len;
 
-  const speed = state.player.speed * (state.running ? 1.55 : 1);
+  const speed = state.player.speed * (state.running ? 1.4 : 1);
   const nx = state.player.x + move.x * speed * dt;
   const ny = state.player.y + move.y * speed * dt;
 
@@ -1193,22 +1200,78 @@ function bindTouchControls() {
   });
 
   ui.interactBtn.addEventListener('click', interact);
+  ui.tapHintBtn.addEventListener('click', () => {
+    showMessage('ゲーム画面を軽くタップしても「調べる」が使えます。');
+  });
   ui.saveBtn.addEventListener('click', () => {
     if (state.screen === 'game' && !state.choiceActive) saveGame();
   });
   ui.menuBtn.addEventListener('click', goTitle);
 
-  let runningHeld = false;
   const setRunning = (value) => {
-    runningHeld = value;
-    state.running = runningHeld;
+    state.running = value;
+    ui.runBtn.classList.toggle('active', value);
+    ui.runBtn.textContent = value ? '走る' : '歩く';
   };
-  ['pointerdown'].forEach((evt) => ui.runBtn.addEventListener(evt, () => setRunning(true)));
-  ['pointerup', 'pointerleave', 'pointercancel'].forEach((evt) => ui.runBtn.addEventListener(evt, () => setRunning(false)));
+  ui.runBtn.addEventListener('click', () => setRunning(!state.running));
+
+  bindJoystick();
 
   canvas.addEventListener('click', () => {
-    if (!ui.messageBox.classList.contains('hidden')) advanceMessage();
+    if (state.screen === 'game' || state.screen === 'ending') {
+      interact();
+    }
   });
+}
+
+function resetStick() {
+  touchStick.active = false;
+  touchStick.pointerId = null;
+  touchStick.x = 0;
+  touchStick.y = 0;
+  if (ui.joystickKnob) ui.joystickKnob.style.transform = 'translate(0px, 0px)';
+}
+
+function updateStickFromEvent(event) {
+  const rect = ui.joystick.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  let dx = event.clientX - cx;
+  let dy = event.clientY - cy;
+  const dist = Math.hypot(dx, dy);
+  const max = Math.max(24, Math.min(rect.width, rect.height) * 0.34);
+  if (dist > max) {
+    dx = (dx / dist) * max;
+    dy = (dy / dist) * max;
+  }
+  touchStick.x = dx / max;
+  touchStick.y = dy / max;
+  ui.joystickKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+}
+
+function bindJoystick() {
+  if (!ui.joystick) return;
+
+  ui.joystick.addEventListener('pointerdown', (event) => {
+    touchStick.active = true;
+    touchStick.pointerId = event.pointerId;
+    ui.joystick.setPointerCapture(event.pointerId);
+    updateStickFromEvent(event);
+  });
+
+  ui.joystick.addEventListener('pointermove', (event) => {
+    if (!touchStick.active || event.pointerId !== touchStick.pointerId) return;
+    updateStickFromEvent(event);
+  });
+
+  const end = (event) => {
+    if (touchStick.pointerId !== null && event.pointerId !== touchStick.pointerId) return;
+    resetStick();
+  };
+
+  ui.joystick.addEventListener('pointerup', end);
+  ui.joystick.addEventListener('pointercancel', end);
+  ui.joystick.addEventListener('lostpointercapture', resetStick);
 }
 
 function bindUi() {

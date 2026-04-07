@@ -3,37 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
-  <title>宵鳴き館</title>
+  <title>宵鳴き館 | 縦画面版</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="rotateHint">横向きにすると遊びやすいです</div>
-
   <main class="app-shell">
+    <header class="top-strip">
+      <div class="hud-left">
+        <div id="mapName" class="map-name">宵鳴き館 玄関ホール</div>
+        <div id="hintText" class="hint">館の気配を調べよう</div>
+      </div>
+      <div class="hud-right">
+        <button id="saveBtn" class="ui-btn small">保存</button>
+        <button id="menuBtn" class="ui-btn small">題名</button>
+      </div>
+    </header>
+
+    <div id="inventoryBar" class="inventory"></div>
+
     <section class="game-stage">
       <canvas id="game" width="320" height="180" aria-label="宵鳴き館"></canvas>
-
-      <div id="hud" class="hud">
-        <div class="hud-left">
-          <div id="mapName" class="map-name">宵鳴き館 玄関ホール</div>
-          <div id="hintText" class="hint">館の気配を調べよう</div>
-        </div>
-        <div class="hud-right">
-          <button id="saveBtn" class="ui-btn small">保存</button>
-          <button id="menuBtn" class="ui-btn small">題名</button>
-        </div>
-      </div>
-
-      <div id="inventoryBar" class="inventory"></div>
-
-      <div id="messageBox" class="message-box hidden">
-        <div id="speakerName" class="speaker"></div>
-        <div id="messageText" class="message-text"></div>
-        <div id="messagePrompt" class="message-prompt">タップ / 調べる で進む</div>
-      </div>
-
-      <div id="choiceBox" class="choice-box hidden"></div>
-
       <div id="overlay" class="overlay hidden"></div>
 
       <div id="titleScreen" class="screen title-screen">
@@ -50,7 +39,7 @@
             <button id="startBtn" class="ui-btn large">ゲームを始める</button>
             <button id="continueBtn" class="ui-btn large secondary">続きから</button>
           </div>
-          <div class="title-footer">移動：方向ボタン / 調べる：右下 / 保存対応</div>
+          <div class="title-footer">縦画面対応 / 左下スティック操作 / 画面タップでも調べる</div>
         </div>
       </div>
 
@@ -66,18 +55,32 @@
       </div>
     </section>
 
-    <section class="touch-ui">
-      <div class="dpad">
-        <button data-dir="up" class="dir-btn up">▲</button>
-        <button data-dir="left" class="dir-btn left">◀</button>
-        <button data-dir="down" class="dir-btn down">▼</button>
-        <button data-dir="right" class="dir-btn right">▶</button>
+    <section class="bottom-panel">
+      <div id="messageBox" class="message-box hidden">
+        <div id="speakerName" class="speaker"></div>
+        <div id="messageText" class="message-text"></div>
+        <div id="messagePrompt" class="message-prompt">タップ / 調べる で進む</div>
       </div>
 
-      <div class="action-cluster">
-        <button id="interactBtn" class="action-btn primary">調べる</button>
-        <button id="runBtn" class="action-btn">走る</button>
-      </div>
+      <div id="choiceBox" class="choice-box hidden"></div>
+
+      <section class="touch-ui">
+        <div class="move-cluster">
+          <div id="joystick" class="joystick" aria-label="移動スティック">
+            <div class="joystick-ring"></div>
+            <div id="joystickKnob" class="joystick-knob"></div>
+          </div>
+          <div class="move-caption">左下スティックで移動</div>
+        </div>
+
+        <div class="action-cluster">
+          <button id="interactBtn" class="action-btn primary">調べる</button>
+          <div class="sub-actions">
+            <button id="runBtn" class="action-btn small toggle">歩く</button>
+            <button id="tapHintBtn" class="action-btn small ghost">画面タップ可</button>
+          </div>
+        </div>
+      </section>
     </section>
   </main>
 
